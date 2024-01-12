@@ -1,14 +1,30 @@
 import express from "express";
 import { config } from "dotenv";
+import { GetCandidatesController } from "./controllers/get-candidates/get-candidates";
+import { MongoGetCandidatesRepository } from "./repositories/get-candidates/mongo-get-candidates";
+import { MongoClient } from "./database/mongo";
 
-config();
+const main = async () => {
+  config();
 
-const app = express();
+  const app = express();
 
-const port = process.env.PORT || 8000;
+  await MongoClient.connect();
 
-app.listen(port, () => console.log(`listening on port ${port}`));
+  app.get("/candidates", async (req, res) => {
+    const mongoGetCandidatesRepository = new MongoGetCandidatesRepository();
+    const getCandidatesController = new GetCandidatesController(
+      mongoGetCandidatesRepository
+    );
 
-app.get("/", (req, res) => {
-  res.send("hello!");
-});
+    const { body, statusCode } = await getCandidatesController.handle();
+
+    res.send(body).status(statusCode);
+  });
+
+  const port = process.env.PORT || 8000;
+
+  app.listen(port, () => console.log(`listening on port ${port}`));
+};
+
+main();
