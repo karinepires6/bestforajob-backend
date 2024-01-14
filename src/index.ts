@@ -21,7 +21,9 @@ const main = async () => {
       mongoGetCandidatesRepository
     );
 
-    const { body, statusCode } = await getCandidatesController.handle();
+    const { body, statusCode } = await getCandidatesController.handle({
+      params: req.query,
+    });
 
     res.send(body).status(statusCode);
   });

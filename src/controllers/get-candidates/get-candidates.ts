@@ -1,4 +1,6 @@
+import { HttpRequest } from "../protocols";
 import {
+  GetCandidatesParams,
   IGetCandidatesController,
   IGetCandidatesRepository,
 } from "./protocols";
@@ -10,9 +12,18 @@ export class GetCandidatesController implements IGetCandidatesController {
     this.getCandidatesRepository = getCandidatesRepository;
   }
 
-  async handle() {
+  async handle(httpRequest: HttpRequest<GetCandidatesParams>) {
     try {
-      const candidates = await this.getCandidatesRepository.getCandidates();
+      if (!httpRequest.params.skills) {
+        return {
+          statusCode: 200,
+          body: await this.getCandidatesRepository.getCandidates(),
+        };
+      }
+
+      const candidates = await this.getCandidatesRepository.getCandidates(
+        httpRequest.params.skills.split(",")
+      );
 
       return {
         statusCode: 200,

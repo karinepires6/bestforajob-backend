@@ -1,10 +1,16 @@
 import { Candidate } from "../../models/candidate";
-import { HttpResponse } from "../protocols";
+import { HttpRequest, HttpResponse } from "../protocols";
 
 export interface IGetCandidatesController {
-  handle(): Promise<HttpResponse<Candidate[]>>;
+  handle(
+    httpRequest: HttpRequest<GetCandidatesParams>
+  ): Promise<HttpResponse<Candidate[]>>;
+}
+
+export interface GetCandidatesParams {
+  skills: string;
 }
 
 export interface IGetCandidatesRepository {
-  getCandidates(): Promise<Candidate[]>;
+  getCandidates(skills?: string[]): Promise<Candidate[]>;
 }
