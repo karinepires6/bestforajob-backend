@@ -26,7 +26,6 @@ export class GetCandidatesController implements IGetCandidatesController {
       );
 
       if (!candidates.length) {
-        console.log("aquii get-candidates-controller");
         return {
           statusCode: 404,
           body: [],
