@@ -25,6 +25,14 @@ export class GetCandidatesController implements IGetCandidatesController {
         httpRequest.params.skills.split(",")
       );
 
+      if (!candidates.length) {
+        console.log("aquii get-candidates-controller");
+        return {
+          statusCode: 404,
+          body: [],
+        };
+      }
+
       return {
         statusCode: 200,
         body: candidates,
@@ -32,7 +40,7 @@ export class GetCandidatesController implements IGetCandidatesController {
     } catch (error) {
       return {
         statusCode: 500,
-        body: "Something went wrong.",
+        body: [],
       };
     }
   }

@@ -14,7 +14,13 @@ export class MongoGetCandidatesRepository implements IGetCandidatesRepository {
             matchingSkillsCount: {
               $size: {
                 $filter: {
-                  input: "$skills",
+                  input: {
+                    $map: {
+                      input: "$skills",
+                      as: "skill",
+                      in: { $toLower: "$$skill" },
+                    },
+                  },
                   as: "skill",
                   cond: { $in: ["$$skill", skills] },
                 },
@@ -34,6 +40,10 @@ export class MongoGetCandidatesRepository implements IGetCandidatesRepository {
         .collection<Omit<Candidate, "id">>("candidates")
         .aggregate(pipeline)
         .toArray();
+
+      if (!candidates[0].matchingSkillsCount) {
+        return [];
+      }
     } else {
       candidates = await MongoClient.db
         .collection<Omit<Candidate, "id">>("candidates")
